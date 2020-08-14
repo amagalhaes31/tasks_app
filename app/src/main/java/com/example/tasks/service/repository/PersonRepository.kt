@@ -37,4 +37,26 @@ class PersonRepository (val context: Context){
             }
         })
     }
+
+    fun create(name: String, email: String, password: String, listener: APIListener){
+        val call: Call<HeaderModel> = mRemote.create(name, email, password, true)
+
+        // Chamada assincrona da API
+        call.enqueue(object : Callback<HeaderModel> {
+            override fun onFailure(call: Call<HeaderModel>, t: Throwable) {                         // Se não conseguiu acesso a API (falha na comunicação)
+                listener.onFailure(context.getString(R.string.ERROR_UNEXPECTED))                    // Mensagem padrão de erro (res/values/strings.xml)
+            }
+
+            override fun onResponse(call: Call<HeaderModel>, response: Response<HeaderModel>) {
+                if (response.code() != TaskConstants.HTTP.SUCCESS) {                                            // Falha ao realizar o login na API
+                    val status = Gson().fromJson(response.errorBody()!!.string(), String::class.java)   // Conversão do Json do arquivo recebido
+                    listener.onFailure(status)
+
+                }
+                else {                                                                              // Sucesso ao realizar login na API
+                    response.body()?.let { listener.onSuccess(it) }
+                }
+            }
+        })
+    }
 }

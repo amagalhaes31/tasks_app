@@ -14,4 +14,18 @@ interface PersonService {
         @Field("email") email: String,
         @Field("password") password: String
     ): Call<HeaderModel>                                                                            // Tipo do retorno
+
+
+
+    @POST("Authentication/Create")                                                            // Usar o método POST e o endereço de acesso
+    @FormUrlEncoded                                                                                 // Formato do body
+    fun create(
+        @Field("name") name: String,
+        @Field("email") email: String,
+        @Field("password") password: String,
+        @Field("receiveNews") receiveNews: Boolean
+    ): Call<HeaderModel>                                                                            // Tipo do retorno
+
+
+
 }
