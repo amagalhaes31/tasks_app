@@ -4,6 +4,8 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.tasks.R
 import com.example.tasks.viewmodel.LoginViewModel
@@ -20,7 +22,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         mViewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
 
         // Inicializa eventos
-        setListeners();
+        setListeners()
         observe()
 
         // Verifica se usuário está logado
@@ -53,7 +55,26 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
     /**
      * Observa ViewModel
      */
-    private fun observe() {}
+    private fun observe() {
+
+        // Verifica a validação do login do usuário
+        mViewModel.login.observe(this, Observer {
+            if (it.successMessage()){
+                startActivity(Intent(this, MainActivity::class.java))
+            }
+            else {
+                Toast.makeText(this,it.failureMessage(), Toast.LENGTH_LONG).show()
+            }
+        })
+
+        // Verifica se o usuário já está logado na aplicação
+        mViewModel.loggedUser.observe(this, Observer {
+            if (it) {
+                startActivity(Intent(this, MainActivity::class.java))
+            }
+        })
+
+    }
 
     /**
      * Autentica usuário

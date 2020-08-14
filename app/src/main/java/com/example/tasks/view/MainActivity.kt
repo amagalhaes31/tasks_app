@@ -66,6 +66,7 @@ class MainActivity : AppCompatActivity() {
         navView.setupWithNavController(navController)
     }
 
+    // Observadores
     private fun observe() {
 
     }
