@@ -9,13 +9,15 @@ import com.example.tasks.service.constants.TaskConstants
 import com.example.tasks.service.listener.APIListener
 import com.example.tasks.service.listener.ValidationListener
 import com.example.tasks.service.repository.PersonRepository
+import com.example.tasks.service.repository.PriorityRepository
 import com.example.tasks.service.repository.local.SecurityPreferences
 
 class LoginViewModel(application: Application) : AndroidViewModel(application) {
 
+    // Atributos
     private val mPersonRepository = PersonRepository(application)
-    private val mSharedPreferences =
-        SecurityPreferences(application)                                                            // Declaração do SharedPrefences
+    private val mPriorityRepository = PriorityRepository(application)
+    private val mSharedPreferences = SecurityPreferences(application)                               // Declaração do SharedPrefences
 
     // Observa o valor de mLogin (Verificação do acesso a API)
     private val mLogin = MutableLiveData<ValidationListener>()
@@ -24,6 +26,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
     // Verifica se o usuário está logado
     private val mLoggedUser = MutableLiveData<Boolean>()
     var loggedUser: LiveData<Boolean> = mLoggedUser
+
 
     /**
      * Faz login usando API
@@ -54,10 +57,16 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
      */
     fun verifyLoggedUser() {
 
+        val loggedUser : Boolean;
         val token = mSharedPreferences.get(TaskConstants.SHARED.TOKEN_KEY)                   // Leitura do Token na sharedPreferences
         val personKey = mSharedPreferences.get(TaskConstants.SHARED.PERSON_KEY)              // Leitura do Person Key na sharedPreferences
 
-        mLoggedUser.value = (token != "" && personKey != "")                                        // Se tiver logado, retorna true, caso contrário, false
+        loggedUser = (token != "" && personKey != "")                                               // Se tiver logado, retorna true, caso contrário, false
+
+        if(!loggedUser) {                                                                           // Chamda silenciosa vista pelo usuário
+            mPriorityRepository.all();
+        }
+        mLoggedUser.value = loggedUser;
     }
 
 }

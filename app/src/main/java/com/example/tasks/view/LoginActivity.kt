@@ -41,8 +41,8 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
      * Inicializa os eventos de click
      */
     private fun setListeners() {
-        button_login.setOnClickListener(this)
-        text_register.setOnClickListener(this)
+        button_login.setOnClickListener(this)                                                       // Botão de ENTRAR (login)
+        text_register.setOnClickListener(this)                                                      // Text View Cadastra-se
     }
 
     /**
@@ -80,6 +80,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
      * Autentica usuário
      */
     private fun handleLogin() {
+
         val email = edit_email.text.toString()
         val password = edit_password.text.toString()
 

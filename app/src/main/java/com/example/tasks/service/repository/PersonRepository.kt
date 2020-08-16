@@ -44,7 +44,7 @@ class PersonRepository (val context: Context){
         // Chamada assincrona da API
         call.enqueue(object : Callback<HeaderModel> {
             override fun onFailure(call: Call<HeaderModel>, t: Throwable) {                         // Se não conseguiu acesso a API (falha na comunicação)
-                listener.onFailure(context.getString(R.string.ERROR_UNEXPECTED))                    // Mensagem padrão de erro (res/values/strings.xml)
+                listener.onFailure(context.getString(R.string.ERROR_UNEXPECTED))       // Mensagem padrão de erro (res/values/strings.xml)
             }
 
             override fun onResponse(call: Call<HeaderModel>, response: Response<HeaderModel>) {
