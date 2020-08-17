@@ -24,7 +24,7 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
 
     fun create(name: String, email: String, password: String) {
 
-        mPersonRepository.create(name, email,password, object : APIListener{
+        mPersonRepository.create(name, email,password, object : APIListener <HeaderModel>{
             override fun onSuccess(model: HeaderModel) {
 
                 // Armazena os dados de login do usuário
