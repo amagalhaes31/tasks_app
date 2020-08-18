@@ -14,7 +14,7 @@ class TaskModel {
     var description: String = ""
 
     @SerializedName("DueDate")
-    var dueData: String = ""
+    var dueDate: String = ""
 
     @SerializedName("Complete")
     var complete: Boolean = false

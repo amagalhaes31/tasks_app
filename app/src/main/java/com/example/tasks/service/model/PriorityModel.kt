@@ -14,6 +14,6 @@ class PriorityModel {
     var id: Int = 0
 
     @SerializedName("Description")
-    @ColumnInfo(name = "descripttion")
+    @ColumnInfo(name = "description")
     var description: String = ""
 }
