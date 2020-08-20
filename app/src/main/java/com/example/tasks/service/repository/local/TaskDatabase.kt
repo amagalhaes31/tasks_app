@@ -12,6 +12,7 @@ abstract class TaskDatabase : RoomDatabase() {
     abstract fun priorityDAO() : PriorityDAO
 
     companion object {
+
         private lateinit var INSTANCE: TaskDatabase
 
         fun getDatabase(context: Context): TaskDatabase {
@@ -25,5 +26,5 @@ abstract class TaskDatabase : RoomDatabase() {
             return INSTANCE
         }
     }
-
 }
+
