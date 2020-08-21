@@ -61,6 +61,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         mViewModel.login.observe(this, Observer {
             if (it.successMessage()){
                 startActivity(Intent(this, MainActivity::class.java))
+                finish()
             }
             else {
                 Toast.makeText(this,it.failureMessage(), Toast.LENGTH_LONG).show()
@@ -71,6 +72,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         mViewModel.loggedUser.observe(this, Observer {
             if (it) {
                 startActivity(Intent(this, MainActivity::class.java))
+                finish()
             }
         })
 

@@ -50,7 +50,6 @@ class TaskFormActivity : AppCompatActivity(), View.OnClickListener, DatePickerDi
         }
     }
 
-
     private fun showDatePicker() {
 
         // Pega as informações da data do celular
@@ -68,6 +67,7 @@ class TaskFormActivity : AppCompatActivity(), View.OnClickListener, DatePickerDi
         if (bundle != null) {
             mTaskId = bundle.getInt(TaskConstants.BUNDLE.TASKID)
             mViewModel.load(mTaskId)
+            button_save.text = getString(R.string.update_task)
         }
     }
 
@@ -100,10 +100,18 @@ class TaskFormActivity : AppCompatActivity(), View.OnClickListener, DatePickerDi
 
         mViewModel.validation.observe(this, androidx.lifecycle.Observer {
             if(it.successMessage()) {
-                Toast.makeText(this, "Sucesso", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(this, "Sucesso", Toast.LENGTH_SHORT).show()
+                if(mTaskId == 0) {
+                    tostMessage(getString(R.string.task_created))
+                } else {
+
+                    tostMessage(getString(R.string.task_updated))
+                }
+                finish()
             }
             else {
-                Toast.makeText(this, it.failureMessage(), Toast.LENGTH_SHORT).show()
+                //Toast.makeText(this, it.failureMessage(), Toast.LENGTH_SHORT).show()
+                tostMessage(it.failureMessage())
             }
         })
 
@@ -143,6 +151,10 @@ class TaskFormActivity : AppCompatActivity(), View.OnClickListener, DatePickerDi
         val date = Calendar.getInstance()
         date.set(year, month, dayOfMonth)
         button_date.text = mDateFormat.format(date.time)
+    }
+
+    private fun tostMessage(string: String) {
+        Toast.makeText(this, string, Toast.LENGTH_SHORT).show()
     }
 
 }
