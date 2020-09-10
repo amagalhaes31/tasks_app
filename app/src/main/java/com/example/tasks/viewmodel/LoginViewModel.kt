@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.tasks.service.model.HeaderModel
 import com.example.tasks.service.constants.TaskConstants
+import com.example.tasks.service.helper.FingerPrintHelper
 import com.example.tasks.service.listener.APIListener
 import com.example.tasks.service.listener.ValidationListener
 import com.example.tasks.service.repository.PersonRepository
@@ -25,9 +26,30 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
     var login: LiveData<ValidationListener> = mLogin
 
     // Verifica se o usuário está logado
-    private val mLoggedUser = MutableLiveData<Boolean>()
-    var loggedUser: LiveData<Boolean> = mLoggedUser
+    private val mFingerPrint = MutableLiveData<Boolean>()
+    var fingerPrint: LiveData<Boolean> = mFingerPrint
 
+    fun isAuthenticationAvailable() {
+
+        val tokenKey = mSharedPreferences.get(TaskConstants.SHARED.TOKEN_KEY)                // Leitura do Token na sharedPreferences
+        val personKey = mSharedPreferences.get(TaskConstants.SHARED.PERSON_KEY)              // Leitura do Person Key na sharedPreferences
+
+        // Se tiver logado, retorna true, caso contrário, false
+        val everLoggedUser : Boolean = (tokenKey != "" && personKey != "")
+
+        // Insere as informações do Header do HTTP
+        RetrofitClient.addHeader(tokenKey, personKey)
+
+        // Chamda silenciosa vista pelo usuário
+        if(!everLoggedUser) {
+            mPriorityRepository.all();
+        }
+
+        // Verifica a disponibilidade do leitor biométrico do dispositivo móvel
+        if(FingerPrintHelper.isAuthenticationAvailable(getApplication())) {
+            mFingerPrint.value = everLoggedUser
+        }
+    }
 
     /**
      * Faz login usando API
@@ -54,29 +76,6 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
                 mLogin.value = ValidationListener(message)
             }
         })
-    }
-
-    /**
-     * Verifica se usuário está logado
-     */
-    fun verifyLoggedUser() {
-
-        val loggedUser : Boolean;
-        val token = mSharedPreferences.get(TaskConstants.SHARED.TOKEN_KEY)                   // Leitura do Token na sharedPreferences
-        val personKey = mSharedPreferences.get(TaskConstants.SHARED.PERSON_KEY)              // Leitura do Person Key na sharedPreferences
-
-        // Insere as informações do Header do HTTP
-        RetrofitClient.addHeader(token, personKey)
-
-        // Se tiver logado, retorna true, caso contrário, false
-        loggedUser = (token != "" && personKey != "")
-
-        // Chamda silenciosa vista pelo usuário
-        if(!loggedUser) {
-            mPriorityRepository.all();
-        }
-
-        mLoggedUser.value = loggedUser;
     }
 
 }

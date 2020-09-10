@@ -5,11 +5,14 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.biometric.BiometricPrompt
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.tasks.R
 import com.example.tasks.viewmodel.LoginViewModel
 import kotlinx.android.synthetic.main.activity_login.*
+import java.util.concurrent.Executor
 
 class LoginActivity : AppCompatActivity(), View.OnClickListener {
 
@@ -25,8 +28,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         setListeners()
         observe()
 
-        // Verifica se usuário está logado
-        verifyLoggedUser()
+        mViewModel.isAuthenticationAvailable()
     }
 
     override fun onClick(v: View) {
@@ -45,12 +47,6 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         text_register.setOnClickListener(this)                                                      // Text View Cadastra-se
     }
 
-    /**
-     * Verifica se usuário está logado
-     */
-    private fun verifyLoggedUser() {
-        mViewModel.verifyLoggedUser()
-    }
 
     /**
      * Observa ViewModel
@@ -59,20 +55,18 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
 
         // Verifica a validação do login do usuário
         mViewModel.login.observe(this, Observer {
-            if (it.successMessage()){
+            if (it.successMessage()) {
                 startActivity(Intent(this, MainActivity::class.java))
                 finish()
-            }
-            else {
-                Toast.makeText(this,it.failureMessage(), Toast.LENGTH_LONG).show()
+            } else {
+                Toast.makeText(this, it.failureMessage(), Toast.LENGTH_LONG).show()
             }
         })
 
         // Verifica se o usuário já está logado na aplicação
-        mViewModel.loggedUser.observe(this, Observer {
+        mViewModel.fingerPrint.observe(this, Observer {
             if (it) {
-                startActivity(Intent(this, MainActivity::class.java))
-                finish()
+                showFingerAuthentication()
             }
         })
 
@@ -87,6 +81,46 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         val password = edit_password.text.toString()
 
         mViewModel.doLogin(email, password)
+    }
+
+    /**
+     * Autencticação do fingerprintf (biometria)
+     */
+    private fun showFingerAuthentication() {
+
+        // Executor (Uma thred -> Mostra a autenticação para o usuário, mas a resposta não é imediata)
+        val executor: Executor = ContextCompat.getMainExecutor(this)
+
+        // BiometricPrompt
+        val biometricPrompt = BiometricPrompt(
+            this@LoginActivity,
+            executor,
+            object : BiometricPrompt.AuthenticationCallback() {
+
+                override fun onAuthenticationFailed() {                                             // Falha na autenticação, não reconhece a impressão digital (fingerprint)
+                    super.onAuthenticationFailed()
+                }
+
+                override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {       // Falha no hardware
+                    super.onAuthenticationError(errorCode, errString)
+                }
+
+                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {    // Autenticação com sucesso
+                    super.onAuthenticationSucceeded(result)
+                    startActivity(Intent(applicationContext,MainActivity::class.java))
+                    finish()
+                }
+            })
+
+        //BiometricPrompt Info
+        val info : BiometricPrompt.PromptInfo = BiometricPrompt.PromptInfo.Builder()
+            .setTitle("Titulo")
+            .setSubtitle("Subtitulo")
+            .setDescription("Descricao")
+            .setNegativeButtonText("Cancelar")                                                      // Obrigatório ter na aplicação
+            .build()
+
+        biometricPrompt.authenticate(info)
     }
 
 }

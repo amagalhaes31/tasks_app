@@ -3,7 +3,9 @@
 <p> From the user's point of view, this application is very simple, but from the user's perspective, I could learn many concepts such as Restful API, ROOM, Retrofit and MVVM. </p>
 <p> This app allows the user register the list task. First of all, It's necessary to register the TASK App and after the user can visualize the all tasks, the next week tasks and overdue tasks. </p>
 
-![images](https://github.com/amagalhaes31/tasks_app/blob/master/.github/imges.gif)
+<p align="center">
+ <img src="https://github.com/amagalhaes31/tasks_app/blob/master/.github/imges.gif">
+</p>
 
 # 📌 Table of Contents
 1. [Learned knowledge](#learned-knowledge)
